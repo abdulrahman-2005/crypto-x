@@ -15,7 +15,6 @@ const nextConfig = {
     scrollRestoration: true
   },
   output: 'standalone',
-  distDir: 'build',
   cleanDistDir: true
 }
 
