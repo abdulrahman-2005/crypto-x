@@ -1,3 +1,9 @@
 [build]
   command = "pnpm install --no-frozen-lockfile && pnpm build"
-  publish = ".next/standalone" 
+  publish = ".next/standalone/.next"
+  functions = ".next/standalone/functions"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200 
