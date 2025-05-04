@@ -16,7 +16,14 @@ import { db } from "@/lib/firebase"
 import { CryptoData, ExchangeData } from "@/app/types"
 import Link from "next/link"
 
-function HeroSection({ cryptoPrice }: { cryptoPrice: { btc: number; eth: number; sol: number } }) {
+// Default crypto prices for static generation
+const defaultCryptoPrices = {
+  btc: 50000,
+  eth: 3000,
+  sol: 100
+}
+
+function HeroSection({ cryptoPrice = defaultCryptoPrices }: { cryptoPrice?: { btc: number; eth: number; sol: number } }) {
   const heroRef = useRef(null)
   const { scrollYProgress } = useScroll({
     target: heroRef,
@@ -295,7 +302,7 @@ export default function Home() {
   const [cryptoSearch, setCryptoSearch] = useState("")
   const [exchangeSearch, setExchangeSearch] = useState("")
   const [mounted, setMounted] = useState(false)
-  const [cryptoPrice, setCryptoPrice] = useState({ btc: 43567.89, eth: 3245.67, sol: 98.76 })
+  const [cryptoPrice, setCryptoPrice] = useState(defaultCryptoPrices)
   const [cryptos, setCryptos] = useState<CryptoData[]>([])
   const [exchanges, setExchanges] = useState<ExchangeData[]>([])
   const [loading, setLoading] = useState(true)
@@ -313,44 +320,33 @@ export default function Home() {
   )
 
   useEffect(() => {
-    setMounted(true)
-
-    // Fetch data from Firebase
     const fetchData = async () => {
       try {
-        const cryptosSnapshot = await getDocs(collection(db, "cryptos"))
-        const exchangesSnapshot = await getDocs(collection(db, "exchanges"))
+        // Fetch crypto prices
+        const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana&vs_currencies=usd')
+        const data = await response.json()
+        setCryptoPrice({
+          btc: data.bitcoin?.usd || defaultCryptoPrices.btc,
+          eth: data.ethereum?.usd || defaultCryptoPrices.eth,
+          sol: data.solana?.usd || defaultCryptoPrices.sol
+        })
 
-        setCryptos(cryptosSnapshot.docs.map(doc => {
-          const data = doc.data()
-          // Ensure chartData is populated with random values if not present
-          if (!data.chartData || !Array.isArray(data.chartData) || data.chartData.length === 0) {
-            data.chartData = Array.from({ length: 12 }, () => Math.floor(Math.random() * 80) + 20)
-          }
-          return { id: doc.id, ...data } as CryptoData
-        }))
-        setExchanges(exchangesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as ExchangeData)))
+        // Fetch cryptos and exchanges from Firestore
+        if (db) {
+          const cryptosSnapshot = await getDocs(collection(db, "cryptos"))
+          const exchangesSnapshot = await getDocs(collection(db, "exchanges"))
+          
+          setCryptos(cryptosSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as CryptoData)))
+          setExchanges(exchangesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as ExchangeData)))
+        }
       } catch (error) {
-        // Removed all console.error statements for production
+        console.error("Error fetching data:", error)
       } finally {
         setLoading(false)
       }
     }
 
     fetchData()
-
-    // Simulate price changes
-    const interval = setInterval(() => {
-      setCryptoPrice((prev: { btc: number; eth: number; sol: number }) => ({
-        btc: prev.btc + (Math.random() - 0.5) * 100,
-        eth: prev.eth + (Math.random() - 0.5) * 10,
-        sol: prev.sol + (Math.random() - 0.5) * 5,
-      }))
-    }, 3000)
-
-    return () => {
-      clearInterval(interval)
-    }
   }, [])
 
   if (!mounted || loading) {

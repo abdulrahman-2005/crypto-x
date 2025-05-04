@@ -14,8 +14,11 @@ const nextConfig = {
   experimental: {
     scrollRestoration: true
   },
-  output: 'standalone',
-  cleanDistDir: true
+  output: 'export',
+  cleanDistDir: true,
+  distDir: '.next',
+  assetPrefix: '/',
+  basePath: '',
 }
 
 export default nextConfig
