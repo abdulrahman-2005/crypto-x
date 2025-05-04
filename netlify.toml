@@ -3,6 +3,14 @@
   publish = ".next/standalone/.next"
   functions = ".next/standalone/functions"
 
+[build.environment]
+  NEXT_PUBLIC_FIREBASE_API_KEY = "AIzaSyDfvX9sowkfrRotS5z08xDwmk29aZAwVjs"
+  NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN = "newcrypto-4e3f0.firebaseapp.com"
+  NEXT_PUBLIC_FIREBASE_PROJECT_ID = "newcrypto-4e3f0"
+  NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET = "newcrypto-4e3f0.firebasestorage.app"
+  NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID = "760268557632"
+  NEXT_PUBLIC_FIREBASE_APP_ID = "1:760268557632:web:aaf7954d47df6096c9fea5"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"

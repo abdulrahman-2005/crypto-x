@@ -6,15 +6,12 @@ import { ArrowLeft, Calendar, Globe, Share2, Clock, Tag } from "lucide-react"
 
 // هذه الوظيفة ضرورية لإنشاء صفحات ثابتة لكل معرف (id)
 export async function generateStaticParams() {
-  try {
-    const newsSnapshot = await getDocs(collection(db, "news"))
-    return newsSnapshot.docs.map(doc => ({
-      id: doc.id
-    }))
-  } catch (error) {
-    console.error("Error generating static params:", error)
-    return []
-  }
+  // Return a default set of news IDs for static generation
+  return [
+    { id: 'news-1' },
+    { id: 'news-2' },
+    { id: 'news-3' }
+  ]
 }
 
 // دالة لجلب خبر محدد
