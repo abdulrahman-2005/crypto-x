@@ -5,7 +5,7 @@
   "scripts": {
     "set-firebase-env": "echo NEXT_PUBLIC_SITE_URL=https://newcrypto-4e3f0.web.app > .env.production",
     "dev": "next dev",
-    "prebuild": "if exist .next rmdir /s /q .next",
+    "prebuild": "rimraf .next",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
